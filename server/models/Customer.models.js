@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const ustomerSchema=new mongoose.Schema({
+const CustomerSchema=new mongoose.Schema({
 
 
 
@@ -55,3 +55,4 @@ const ustomerSchema=new mongoose.Schema({
 
 { timestamps: true }
 );
+module.exports=mongoose.model("Customer",CustomerSchema);

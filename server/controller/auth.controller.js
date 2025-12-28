@@ -2,7 +2,13 @@ const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
 const Customer=require('../models/Customer.models');
 const Worker=require('../models/Worker.models');
+require('dotenv').config();
+
 const JWT_SECRET=process.env.JWT_SECRET;
+
+if(!JWT_SECRET){
+    console.error('Missing JWT_SECRET environment variable');
+}
 
 
 // Register Customer
@@ -93,11 +99,12 @@ try{
         return res.status(400).json({message:"Invalid email or password"});
     }   
     //jwt sign token so when everneed to access protected route we can verify token and get user info valid up to 7 days by token the actual use is to access protected routes and verify user identity token 
-    const token=jwt.sign(
-        {userId:user._id,role},
-        JWT_SECRET,
-        {expiresIn:'7d'}
-    );  
+    if(!JWT_SECRET){
+        console.error('Cannot sign JWT: JWT_SECRET is not set');
+        return res.status(500).json({message:'Server configuration error'});
+    }
+
+    const token=jwt.sign({userId:user._id,role}, JWT_SECRET, {expiresIn:'7d'});  
     res.status(200).json({token,role}); 
 }catch(error){
     console.error("Error during login:",error);

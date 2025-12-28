@@ -95,3 +95,5 @@ name: {
   }
 
 }, { timestamps: true } );
+
+module.exports=mongoose.model("Worker",workerSchema);
