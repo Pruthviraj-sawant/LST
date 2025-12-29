@@ -1,4 +1,4 @@
-const mongoose=new require('mongoose');
+const mongoose = require('mongoose');
 const workerSchema=new mongoose.Schema({
 
 name: {
@@ -37,21 +37,29 @@ name: {
     default: "OTHER"
   },
 
-  desscription: {
+  description: {
     type: String,
     trim: true
     },
 
-  charges: {
-    basePrice: {
-      type: Number,
-      required: true
-    },
-    visitCharge: {
-      type: Number,
-      default: 0
-    }
+ charges: {
+  visitCharge: {
+    type: Number,
+    default: 0
   },
+  services: [
+    {
+      workType: {
+        type: String, // "Leakage", "Fitting", "Installation"
+        required: true
+      },
+      price: {
+        type: Number,
+        required: true
+      }
+    }
+  ]
+},
 
   isVerified: {
     type: Boolean,
