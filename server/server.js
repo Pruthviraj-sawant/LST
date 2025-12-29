@@ -12,6 +12,16 @@ connectDB();
 app.use(express.json()); //we do .json to parse json data in req body
 
 
+//NGNIX
+app.get("/", (req, res) => {
+  res.json({
+    message: "API running",
+    port: PORT,
+    pid: process.pid
+  });
+});
+//this is for health check of server by nginx
+
 // Routes
 app.use('/api/auth',authRoutes);
 
