@@ -85,7 +85,7 @@ try{
     }
 
     let user=await Customer.findOne({email});
-    let role="CUSTOMER";
+    let role="USER";
     if(!user){
         user=await Worker.findOne({email});
         role="WORKER";

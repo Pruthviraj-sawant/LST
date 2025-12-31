@@ -3,6 +3,7 @@ const dotenv=require('dotenv');
 
 const connectDB=require('./config/db');
 const authRoutes=require('./routes/auth.router');
+const bookingRoutes=require('./routes/booking.router');
 dotenv.config();
 
 const app=express();
@@ -24,7 +25,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use('/api/auth',authRoutes);
-
+app.use('/api/bookings',bookingRoutes);
 
 // Start the server
 const PORT=process.env.PORT || 5000;
