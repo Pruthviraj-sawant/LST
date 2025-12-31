@@ -1,0 +1,131 @@
+
+Below is a COMPLETE, READY Postman test set for ALL booking operations :
+
+
+
+🔑 STEP 1: LOGIN & SAVE TOKENS
+1️⃣ USER LOGIN
+POST /api/auth/login
+
+{
+  "email": "sawantprithviraj9@gmail.com",
+  "password": "Pp@12345678"
+}
+
+
+👉 Save token as:
+
+USER_TOKEN
+
+2️⃣ WORKER LOGIN
+POST /api/auth/login
+
+{
+  "email": "rajesh@example.com",
+  "password": "sec123"
+}
+
+
+👉 Save token as:
+
+WORKER_TOKEN
+
+📅 STEP 2: CREATE BOOKING (USER)
+3️⃣ Create Booking
+POST /api/bookings
+
+Headers
+Authorization: Bearer {{USER_TOKEN}}
+
+Body
+{
+  "workerId": "REPLACE_WITH_WORKER_ID",
+  "workType": "Leakage",
+  "bookingDate": "2025-02-15",
+  "bookingTime": "10:00 AM",
+  "timeSlot": "10:00 - 11:00"
+}
+
+
+✅ Backend auto-calculates:
+
+visitCharge = 150
+
+serviceCharge = 300
+
+amount = 450
+
+platformFee = 23
+
+workerEarnings = 427
+
+📄 STEP 3: USER VIEWS BOOKINGS
+4️⃣ Get User Bookings
+GET /api/bookings/user
+
+Headers
+Authorization: Bearer {{USER_TOKEN}}
+
+👷 STEP 4: WORKER VIEWS BOOKINGS
+5️⃣ Get Worker Bookings
+GET /api/bookings/worker
+
+Headers
+Authorization: Bearer {{WORKER_TOKEN}}
+
+✅ STEP 5: WORKER ACCEPTS BOOKING
+6️⃣ Accept Booking
+PATCH /api/bookings/{{BOOKING_ID}}/accept
+
+Headers
+Authorization: Bearer {{WORKER_TOKEN}}
+
+📄 STEP 6: USER CHECKS STATUS
+7️⃣ Get User Bookings Again
+GET /api/bookings/user
+
+
+Status will now be:
+
+CONFIRMED
+
+🛠️ STEP 7: WORKER COMPLETES BOOKING
+8️⃣ Complete Booking
+PATCH /api/bookings/{{BOOKING_ID}}/complete
+
+Headers
+Authorization: Bearer {{WORKER_TOKEN}}
+
+❌ STEP 8: CANCEL BOOKING (OPTIONAL)
+9️⃣ Cancel Booking (USER)
+PATCH /api/bookings/{{BOOKING_ID}}/cancel
+
+Headers
+Authorization: Bearer {{USER_TOKEN}}
+
+
+⚠️ Will fail if already COMPLETED.
+
+🧪 NEGATIVE TEST CASES (VERY IMPORTANT)
+❌ Worker tries to cancel
+403 Forbidden
+
+❌ User tries to accept
+403 Forbidden
+
+❌ Cancel completed booking
+400 Bad Request
+
+🧠 QUICK POSTMAN VARIABLES SETUP
+
+In Postman Environment:
+
+USER_TOKEN = <jwt>
+WORKER_TOKEN = <jwt>
+BOOKING_ID = <id from create response>
+
+🎯 FINAL FLOW SUMMARY
+USER → Create booking
+WORKER → Accept
+WORKER → Complete
+PLATFORM → Earn 5%
