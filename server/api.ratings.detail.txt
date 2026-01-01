@@ -1,0 +1,279 @@
+
+**CLEAN, END-TO-END API FLOW** to test **Rating system in Postman**.
+
+I’ll assume:
+
+* JWT auth is working
+* Booking is already **COMPLETED**
+* You already have `USER`, `WORKER`, `ADMIN`
+
+---
+
+# 🔁 COMPLETE RATING API FLOW (POSTMAN)
+
+---
+
+## 🟢 STEP 0: PREREQUISITES (VERY IMPORTANT)
+
+### Booking must be:
+
+```json
+{
+  "_id": "65f1a9b123abc456def78901",
+  "status": "COMPLETED",
+  "customerId": "USER_ID",
+  "workerId": "WORKER_ID"
+}
+```
+
+⚠️ If booking is `PENDING / CANCELLED` → rating will FAIL.
+
+---
+
+# 🟩 FLOW 1: USER RATES WEBSITE
+
+### 🔹 API
+
+```
+POST /ratings
+```
+
+### 🔹 Headers
+
+```
+Authorization: Bearer USER_JWT_TOKEN
+Content-Type: application/json
+```
+
+### 🔹 Body
+
+```json
+{
+  "bookingId": "65f1a9b123abc456def78901",
+  "rating": 4,
+  "review": "Website experience was smooth and easy"
+}
+```
+
+### ✅ Expected Response
+
+```json
+{
+  "_id": "660abc1234def56789011122",
+  "bookingId": "65f1a9b123abc456def78901",
+  "customerId": "USER_ID",
+  "workerId": null,
+  "rating": 4,
+  "review": "Website experience was smooth and easy",
+  "createdAt": "...",
+  "updatedAt": "..."
+}
+```
+
+---
+
+# 🟩 FLOW 2: USER RATES WORKER
+
+### 🔹 API
+
+```
+POST /ratings/worker/WORKER_ID
+```
+
+### 🔹 Headers
+
+```
+Authorization: Bearer USER_JWT_TOKEN
+Content-Type: application/json
+```
+
+### 🔹 Body
+
+```json
+{
+  "bookingId": "65f1a9b123abc456def78901",
+  "rating": 5,
+  "review": "Worker arrived on time and fixed everything"
+}
+```
+
+### ✅ Expected Response
+
+```json
+{
+  "_id": "660bbb4567abc89011122233",
+  "bookingId": "65f1a9b123abc456def78901",
+  "customerId": "USER_ID",
+  "workerId": "WORKER_ID",
+  "rating": 5,
+  "review": "Worker arrived on time and fixed everything"
+}
+```
+
+---
+
+# 🟩 FLOW 3: PREVENT DUPLICATE RATING (AUTO CHECK)
+
+### 🔹 Try again with same bookingId
+
+```json
+{
+  "bookingId": "65f1a9b123abc456def78901",
+  "rating": 3
+}
+```
+
+### ❌ Response
+
+```json
+{
+  "message": "You have already rated this booking"
+}
+```
+
+---
+
+# 🟩 FLOW 4: USER VIEWS WORKER RATINGS
+
+### 🔹 API
+
+```
+GET /ratings/worker/WORKER_ID
+```
+
+### 🔹 Headers
+
+```
+Authorization: Bearer USER_JWT_TOKEN
+```
+
+### ✅ Response
+
+```json
+[
+  {
+    "rating": 5,
+    "review": "Worker arrived on time and fixed everything",
+    "customerId": { "name": "Amit Sharma" }
+  }
+]
+```
+
+---
+
+# 🟩 FLOW 5: WORKER VIEWS OWN RATINGS
+
+### 🔹 API
+
+```
+GET /ratings/worker/WORKER_ID
+```
+
+### 🔹 Headers
+
+```
+Authorization: Bearer WORKER_JWT_TOKEN
+```
+
+✅ Allowed
+
+---
+
+# 🟥 FLOW 6: WORKER TRIES TO VIEW OTHER WORKER RATINGS
+
+### ❌ Forbidden
+
+```json
+{
+  "message": "Access denied to other workers' ratings"
+}
+```
+
+---
+
+# 🟩 FLOW 7: USER UPDATES OWN RATING
+
+### 🔹 API
+
+```
+PUT /ratings/RATING_ID
+```
+
+### 🔹 Headers
+
+```
+Authorization: Bearer USER_JWT_TOKEN
+```
+
+### 🔹 Body
+
+```json
+{
+  "rating": 4,
+  "review": "Updated after follow-up service"
+}
+```
+
+---
+
+# 🟥 FLOW 8: USER TRIES TO DELETE RATING
+
+### ❌ Forbidden
+
+```json
+{
+  "message": "Access denied"
+}
+```
+
+---
+
+# 🟩 FLOW 9: ADMIN GETS ALL RATINGS
+
+### 🔹 API
+
+```
+GET /ratings
+```
+
+### 🔹 Headers
+
+```
+Authorization: Bearer ADMIN_JWT_TOKEN
+```
+
+---
+
+# 🟩 FLOW 10: ADMIN DELETES A RATING
+
+### 🔹 API
+
+```
+DELETE /ratings/RATING_ID
+```
+
+### 🔹 Headers
+
+```
+Authorization: Bearer ADMIN_JWT_TOKEN
+```
+
+### ✅ Response
+
+```json
+{
+  "message": "Rating deleted successfully"
+}
+```
+
+---
+
+# 🏁 FINAL SYSTEM CHECKLIST
+
+✔ Booking ownership verified
+✔ One rating per booking
+✔ Role-based access enforced
+✔ Secure ID handling
+✔ Real-world behavior
+
+

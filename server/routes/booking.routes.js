@@ -1,7 +1,7 @@
 const express = require("express");
-const auth = require("../middleware/auth.middleware");
-const roleGuard = require("../middleware/role.middleware");
-const bookingAccess = require("../middleware/bookingAccess.middleware");
+const auth = require("../middleware/auth.middleware.js");
+const roleGuard = require("../middleware/role.middleware.js");
+const bookingAccess = require("../middleware/bookingAccess.middleware.js");
 
 const {
   createBooking,

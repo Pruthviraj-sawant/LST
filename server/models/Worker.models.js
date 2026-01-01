@@ -63,7 +63,7 @@ name: {
 
   isVerified: {
     type: Boolean,
-    default: true
+    default: false
   },
 
   rating: {

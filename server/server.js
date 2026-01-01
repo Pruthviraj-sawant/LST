@@ -2,8 +2,12 @@ const express=require('express');
 const dotenv=require('dotenv');
 
 const connectDB=require('./config/db');
-const authRoutes=require('./routes/auth.router');
-const bookingRoutes=require('./routes/booking.router');
+const authRoutes=require('./routes/auth.routes');
+const bookingRoutes=require('./routes/booking.routes');
+const RatingRoutes=require('./routes/rating.routes');
+const adminRoutes=require('./routes/admin/admin.routes');
+const adminAuthRoutes=require('./routes/admin/admin.auth.routes');
+
 dotenv.config();
 
 const app=express();
@@ -24,8 +28,15 @@ app.get("/", (req, res) => {
 //this is for health check of server by nginx
 
 // Routes
+
 app.use('/api/auth',authRoutes);
 app.use('/api/bookings',bookingRoutes);
+app.use('/api/ratings',RatingRoutes);
+
+
+// Admin Routes
+app.use('/api/admin/auth',adminAuthRoutes);
+app.use('/api/admin',adminRoutes);
 
 // Start the server
 const PORT=process.env.PORT || 5000;

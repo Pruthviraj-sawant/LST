@@ -1,0 +1,71 @@
+
+
+basic login does for admin 
+
+
+CORRECT & INDUSTRY-STANDARD APPROACH
+🔐 Admin creation is MANUAL / ONE-TIME
+
+Admin account is created:
+
+Directly in DB (MongoDB Compass) OR via a protected script Admin can ONLY LOGIN No public register API
+This is how:
+Flipkart
+Amazon
+Ola
+UrbanCompany
+do it.
+
+ADMIN CONTROLLER (CLEAN & SECURE)
+
+
+HOW TO CREATE FIRST ADMIN (ONE TIME)
+🔹 MongoDB Compass (Recommended for now)
+
+Before inserting, hash password:
+
+const bcrypt = require("bcryptjs");
+bcrypt.hashSync("Admin@123", 10);
+
+
+🔹 API DESIGN (RECOMMENDED)
+Endpoint
+post /api/admin/auth/login
+
+{
+  "email": "sawantprithviraj9@gmail.com",
+  "password": "Pp@12345678"
+}
+
+SAVE TOKERN AS : 
+  ADMIN_TOKEN 
+........................................................................
+
+✅ HOW ADMIN SHOULD VERIFY / REJECT A WORKER
+🔑 Core idea
+
+Admin decides worker status
+
+Admin sends true / false
+
+Backend updates isVerified
+
+Optional reason can be stored/logged
+
+🔹 API DESIGN (RECOMMENDED)
+Endpoint
+PATCH /api/admin/verify-worker/:workerId
+
+Auth
+Authorization: Bearer <ADMIN_TOKEN>
+
+✅ JSON BODY (WHAT TO SEND)
+✔ Approve / Verify Worker
+{
+  "isVerified": true
+}
+
+❌ Reject / Block Worker
+{
+  "isVerified": false
+}

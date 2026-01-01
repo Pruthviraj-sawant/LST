@@ -1,26 +1,46 @@
+const mongoose = require('mongoose');
 const Rating = require('../models/RatingAndReview.models');
 
 module.exports = async (req, res, next) => {
   try {
     const ratingId = req.params.id;
-    if (!ratingId) return res.status(400).json({ message: 'Rating ID missing' });
+
+    if (!ratingId) {
+      return res.status(400).json({ message: "Rating ID missing" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(ratingId)) {
+      return res.status(400).json({ message: "Invalid rating ID" });
+    }
 
     const rating = await Rating.findById(ratingId);
-    if (!rating) return res.status(404).json({ message: 'Rating not found' });
+    if (!rating) {
+      return res.status(404).json({ message: "Rating not found" });
+    }
 
-    const user = req.user;
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+    const { userId, role } = req.user;
 
-    // Admins can access anything
-    if (user.role === 'ADMIN' || user.role === 'admin') return next();
+    // 1️⃣ Admin → full access
+    if (role === "ADMIN") {
+      return next();
+    }
 
-    // Customers can access ratings they created
-    if ((user.role === 'USER' || user.role === 'user') && rating.customerId.toString() === user.id) return next();
+    // 2️⃣ User → only their own ratings
+    if (role === "USER" && rating.customerId.toString() === userId) {
+      return next();
+    }
 
-    // Workers can access ratings for themselves
-    if ((user.role === 'WORKER' || user.role === 'worker') && rating.workerId.toString() === user.id) return next();
+    // 3️⃣ Worker → only ratings about them (if workerId exists)
+    if (
+      role === "WORKER" &&
+      rating.workerId &&
+      rating.workerId.toString() === userId
+    ) {
+      return next();
+    }
 
-    return res.status(403).json({ message: 'Access denied for this rating' });
+    return res.status(403).json({ message: "Access denied for this rating" });
+
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
