@@ -60,10 +60,20 @@ name: {
     }
   ]
 },
-
+profileImage: {
+  url: {
+    type: String,
+    default: ""
+  },
+  publicId: {
+    type: String,
+    default: ""
+  }
+}
+,
   isVerified: {
     type: Boolean,
-    default: false
+    default: false //admin verification
   },
 
   rating: {

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const ratingAndReviewSchema = new mongoose.Schema({
   bookingId: {
     type: mongoose.Schema.Types.ObjectId,

@@ -7,6 +7,7 @@ const bookingRoutes=require('./routes/booking.routes');
 const RatingRoutes=require('./routes/rating.routes');
 const adminRoutes=require('./routes/admin/admin.routes');
 const adminAuthRoutes=require('./routes/admin/admin.auth.routes');
+const ImgUploadRoutes=require('./routes/ImgUpload.routes');
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 // Routes
 
 app.use('/api/auth',authRoutes);
+app.use('/api/upload',ImgUploadRoutes);
 app.use('/api/bookings',bookingRoutes);
 app.use('/api/ratings',RatingRoutes);
 
@@ -37,6 +39,8 @@ app.use('/api/ratings',RatingRoutes);
 // Admin Routes
 app.use('/api/admin/auth',adminAuthRoutes);
 app.use('/api/admin',adminRoutes);
+
+
 
 // Start the server
 const PORT=process.env.PORT || 5000;

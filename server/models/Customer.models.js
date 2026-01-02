@@ -45,7 +45,16 @@ const CustomerSchema=new mongoose.Schema({
       index: "2dsphere"
     }
   },
-
+profileImage: {
+  url: {
+    type: String,
+    default: ""
+  },
+  publicId: {
+    type: String,
+    default: ""
+  }
+},
   isActive: {
     type: Boolean,
     default: true
