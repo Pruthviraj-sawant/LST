@@ -8,7 +8,7 @@ const RatingRoutes=require('./routes/rating.routes');
 const adminRoutes=require('./routes/admin/admin.routes');
 const adminAuthRoutes=require('./routes/admin/admin.auth.routes');
 const ImgUploadRoutes=require('./routes/ImgUpload.routes');
-
+const ProfileUpdateRoutes=require('./routes/profile.routes');
 dotenv.config();
 
 const app=express();
@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
 // Routes
 
 app.use('/api/auth',authRoutes);
+app.use('/api/update',ProfileUpdateRoutes);
 app.use('/api/upload',ImgUploadRoutes);
 app.use('/api/bookings',bookingRoutes);
 app.use('/api/ratings',RatingRoutes);
