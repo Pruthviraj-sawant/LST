@@ -21,6 +21,20 @@ exports.createBooking = async (req, res) => {
       });
     }
 
+    //double booking check
+    const conflictBooking = await Booking.findOne({
+  workerId,
+  bookingDate: finalDate,
+  bookingTime: finalTime,
+  status: "CONFIRMED"
+});
+
+if (conflictBooking) {
+  return res.status(409).json({
+    message: "Worker already has a confirmed booking for this time"
+  });
+}
+
     // 2. Find service pricing
     const service = worker.charges.services.find(
       (s) => s.workType === workType
@@ -31,6 +45,8 @@ exports.createBooking = async (req, res) => {
         message: "Service not offered by this worker"
       });
     }
+
+
 
     // 3. Calculate pricing
     const visitCharge = worker.charges.visitCharge || 0;
@@ -124,6 +140,21 @@ exports.acceptBooking = async (req, res) => {
     if (booking.status !== "PENDING") {
       return res.status(400).json({
         message: "Only pending bookings can be accepted"
+      });
+    }
+
+    //prevent race condition double booking
+      const conflict = await Booking.findOne({
+      _id: { $ne: booking._id },
+      workerId: booking.workerId,
+      bookingDate: booking.bookingDate,
+      bookingTime: booking.bookingTime,
+      status: "CONFIRMED"
+    });
+
+    if (conflict) {
+      return res.status(409).json({
+        message: "Time slot already booked"
       });
     }
 

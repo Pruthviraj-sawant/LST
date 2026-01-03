@@ -61,6 +61,13 @@ const BookingSchema=new mongoose.Schema({
 
 
 
+
 }, { timestamps: true });   
+
+BookingSchema.index({
+  workerId: 1,
+  bookingDate: 1,
+  bookingTime: 1
+});
 
 module.exports=mongoose.model("Booking",BookingSchema);
