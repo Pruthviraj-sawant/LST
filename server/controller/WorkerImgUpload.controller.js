@@ -1,10 +1,10 @@
-const worker = require('../models/Worker.models');
+const Worker = require('../models/Worker.models');
 const cloudinary = require('../config/cloudinary');
 
 // Update Worker Profile Image
 exports.updateWorkerProfileImage = async (req, res) => {
   try {
-    const workerId = req.user.userId;
+    const workerId = req.user.id;
 
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });

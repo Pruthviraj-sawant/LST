@@ -7,7 +7,7 @@ exports.updateUserProfileImage = async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });
