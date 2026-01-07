@@ -5,7 +5,7 @@ const Booking = require('../models/Booking.models.js');
 exports.createRating = async (req, res) => {
   try {
     const { bookingId, rating, review } = req.body;
-    const customerId = req.user.userId;
+    const customerId = req.user.id;
 
     // 1. Check booking exists & belongs to user
     const booking = await Booking.findOne({
@@ -52,7 +52,7 @@ exports.craeteRatingForWorker = async (req, res) => {
   try {
     const { workerId } = req.params;
     const { bookingId, rating, review } = req.body;
-    const customerId = req.user.userId;
+    const customerId = req.user.id;
 
     // 1. Validate booking
     const booking = await Booking.findOne({
@@ -119,7 +119,7 @@ exports.getRatingsForWorker = async (req, res) => {
     }
 
     // 2. If requester is WORKER, restrict to own ratings
-    if (req.user.role === "WORKER" && req.user.userId !== workerId) {
+    if (req.user.role === "WORKER" && req.user.id !== workerId) {
       return res.status(403).json({
         message: "Access denied to other workers' ratings"
       });

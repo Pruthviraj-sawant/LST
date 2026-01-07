@@ -21,19 +21,19 @@ exports.createBooking = async (req, res) => {
       });
     }
 
-    //double booking check
-    const conflictBooking = await Booking.findOne({
-  workerId,
-  bookingDate: finalDate,
-  bookingTime: finalTime,
-  status: "CONFIRMED"
-});
+      // double booking check (use provided bookingDate/bookingTime)
+      const conflictBooking = await Booking.findOne({
+        workerId,
+        bookingDate: bookingDate,
+        bookingTime: bookingTime,
+        status: "CONFIRMED"
+      });
 
-if (conflictBooking) {
-  return res.status(409).json({
-    message: "Worker already has a confirmed booking for this time"
-  });
-}
+      if (conflictBooking) {
+        return res.status(409).json({
+          message: "Worker already has a confirmed booking for this time"
+        });
+      }
 
     // 2. Find service pricing
     const service = worker.charges.services.find(

@@ -1,6 +1,6 @@
 const express=require('express');
 const dotenv=require('dotenv');
-
+const cors=require('cors');
 const connectDB=require('./config/db');
 const authRoutes=require('./routes/auth.routes');
 const bookingRoutes=require('./routes/booking.routes');
@@ -16,6 +16,10 @@ const app=express();
 // Connect to Database
 connectDB();
 app.use(express.json()); //we do .json to parse json data in req body
+
+
+// Enable CORS
+app.use(cors());
 
 
 //NGNIX
