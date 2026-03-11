@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as ratingAPI from "./ratingAPI";
 
-/* ---------------- THUNKS ---------------- */
+/* ============ THUNKS ============ */
 
 // Website rating
 export const submitWebsiteRating = createAsyncThunk(
@@ -11,7 +11,9 @@ export const submitWebsiteRating = createAsyncThunk(
       const res = await ratingAPI.createWebsiteRating(data);
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to submit rating"
+      );
     }
   }
 );
@@ -24,7 +26,9 @@ export const submitWorkerRating = createAsyncThunk(
       const res = await ratingAPI.rateWorker(workerId, data);
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to submit rating"
+      );
     }
   }
 );
@@ -37,17 +41,80 @@ export const fetchWorkerRatings = createAsyncThunk(
       const res = await ratingAPI.getRatingsForWorker(workerId);
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch ratings"
+      );
     }
   }
 );
 
-/* ---------------- SLICE ---------------- */
+// Get rating by ID
+export const getRatingById = createAsyncThunk(
+  "rating/getRatingById",
+  async (ratingId, thunkAPI) => {
+    try {
+      const res = await ratingAPI.getRatingById(ratingId);
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch rating"
+      );
+    }
+  }
+);
+
+// Update rating
+export const updateRatingAsync = createAsyncThunk(
+  "rating/updateRating",
+  async ({ ratingId, data }, thunkAPI) => {
+    try {
+      const res = await ratingAPI.updateRating(ratingId, data);
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to update rating"
+      );
+    }
+  }
+);
+
+// Delete rating
+export const deleteRatingAsync = createAsyncThunk(
+  "rating/deleteRating",
+  async (ratingId, thunkAPI) => {
+    try {
+      await ratingAPI.deleteRating(ratingId);
+      return ratingId;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to delete rating"
+      );
+    }
+  }
+);
+
+// Fetch all ratings (Admin)
+export const fetchAllRatings = createAsyncThunk(
+  "rating/fetchAllRatings",
+  async (_, thunkAPI) => {
+    try {
+      const res = await ratingAPI.getAllRatings();
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch ratings"
+      );
+    }
+  }
+);
+
+/* ============ SLICE ============ */
 
 const ratingSlice = createSlice({
   name: "rating",
   initialState: {
     list: [],
+    currentRating: null,
     loading: false,
     success: false,
     error: null
@@ -61,7 +128,6 @@ const ratingSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
       // Submit website rating
       .addCase(submitWebsiteRating.pending, (state) => {
         state.loading = true;
@@ -99,6 +165,62 @@ const ratingSlice = createSlice({
         state.list = action.payload;
       })
       .addCase(fetchWorkerRatings.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Get rating by ID
+      .addCase(getRatingById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getRatingById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentRating = action.payload;
+      })
+      .addCase(getRatingById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Update rating
+      .addCase(updateRatingAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateRatingAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.list = state.list.map((r) =>
+          r._id === action.payload._id ? action.payload : r
+        );
+      })
+      .addCase(updateRatingAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Delete rating
+      .addCase(deleteRatingAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteRatingAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.list = state.list.filter((r) => r._id !== action.payload);
+      })
+      .addCase(deleteRatingAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Fetch all ratings
+      .addCase(fetchAllRatings.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchAllRatings.fulfilled, (state, action) => {
+        state.loading = false;
+        state.list = action.payload;
+      })
+      .addCase(fetchAllRatings.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

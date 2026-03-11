@@ -1,15 +1,27 @@
-import axios from "../../services/axiosInstance";
+import axiosInstance from "../../services/axiosInstance";
 
 export const createBooking = (data) =>
-  axios.post("/bookings", data);
+  axiosInstance.post("/bookings", data);
 
 export const getMyBookings = (role) => {
   const url =
     role === "WORKER"
       ? "/bookings/worker"
       : "/bookings/user";
-  return axios.get(url);
+  return axiosInstance.get(url);
 };
 
+export const getWorkerBookings = () =>
+  axiosInstance.get("/bookings/worker");
+
+export const getUserBookings = () =>
+  axiosInstance.get("/bookings/user");
+
+export const acceptBooking = (id) =>
+  axiosInstance.patch(`/bookings/${id}/accept`);
+
+export const completeBooking = (id) =>
+  axiosInstance.patch(`/bookings/${id}/complete`);
+
 export const cancelBooking = (id) =>
-  axios.patch(`/bookings/${id}/cancel`);
+  axiosInstance.patch(`/bookings/${id}/cancel`);

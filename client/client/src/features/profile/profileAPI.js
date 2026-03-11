@@ -1,11 +1,11 @@
-import axios from "../../services/axiosInstance";
+import axiosInstance from "../../services/axiosInstance";
 
 export const getProfile = () => {
-  return axios.get("/profile/me");
+  return axiosInstance.get("/profile/me");
 };
 
 export const updateProfile = (data) => {
-  return axios.patch("/profile", data);
+  return axiosInstance.patch("/profile", data);
 };
 
 export const uploadProfileImage = (formData, role) => {
@@ -14,7 +14,7 @@ export const uploadProfileImage = (formData, role) => {
       ? "/upload/worker/profile-image"
       : "/upload/user/profile-image";
 
-  return axios.patch(endpoint, formData, {
+  return axiosInstance.patch(endpoint, formData, {
     headers: { "Content-Type": "multipart/form-data" }
   });
 };
